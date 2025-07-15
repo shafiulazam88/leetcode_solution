@@ -1,0 +1,76 @@
+You are given an integer array bloomDay, an integer m and an integer k.
+
+You want to make m bouquets. To make a bouquet, you need to use k adjacent flowers from the garden.
+
+The garden consists of n flowers, the ith flower will bloom in the bloomDay[i] and then can be used in exactly one bouquet.
+
+Return the minimum number of days you need to wait to be able to make m bouquets from the garden. If it is impossible to make m bouquets return -1.
+
+class Solution {
+public:
+     // see possible to make bouqets or not
+     bool possible(vector<int>& bloomDay ,int day , int m , int k )
+     {
+        int count = 0;
+        int bouqets=0;
+        int n = bloomDay.size();
+        // iterate over the elemants and count
+        for(int i= 0 ; i < n; i++)
+        {
+            //day is mid in BS on search
+            if(bloomDay[i] <= day)
+            {
+                count++;
+            }
+            //  reset count 0 ; store no of bouqets
+            else{
+                bouqets += count / k; // need k flower to make bouqet
+                count = 0;
+            }
+        }
+        // leftover bouqets if, else doesnt run and loop breaks with elements that       
+        //lesser than the day
+        bouqets += count/k;
+        // check m bouqets possible or not
+        if(bouqets>= m)
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
+     }
+    int minDays(vector<int>& bloomDay, int m, int k){
+        // check possible or not by the size
+        long long val = 1ll* m * 1ll * k;
+        if(val > bloomDay.size())
+        {
+            return -1;
+        }
+        // find the max and min to perform bs on answer 
+        int mx = INT_MIN , mn = INT_MAX;
+        for(int i = 0; i < bloomDay.size(); i++)
+        {
+           
+                mx = max(bloomDay[i], mx);
+                mn = min(bloomDay[i], mn);           
+        }
+        int low = mn ;
+        int high = mx;
+        int ans = 0;
+        while(low<=high)
+        {
+            int mid = (low+high)/2;
+            if(possible(bloomDay,mid , m ,k))
+            {
+                high = mid -1;
+              
+                 ans = mid;
+            }
+            else{
+                low = mid+1 ;
+            }
+        }
+        return ans;
+    }
+};
